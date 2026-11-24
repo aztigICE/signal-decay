@@ -1,0 +1,81 @@
+[gd_scene load_steps=10 format=3]
+
+[ext_resource type="Script" path="res://scripts/flicker_light.gd" id="1_flicker"]
+
+[sub_resource type="StandardMaterial3D" id="Mat_metal"]
+albedo_color = Color(0.16, 0.2, 0.17, 1)
+metallic = 0.6
+roughness = 0.55
+
+[sub_resource type="StandardMaterial3D" id="Mat_bulb"]
+albedo_color = Color(1, 0.85, 0.6, 1)
+emission_enabled = true
+emission = Color(1, 0.72, 0.4, 1)
+emission_energy_multiplier = 3.0
+
+[sub_resource type="BoxMesh" id="Mesh_plate"]
+material = SubResource("Mat_metal")
+size = Vector3(0.12, 0.2, 0.03)
+
+[sub_resource type="BoxMesh" id="Mesh_arm"]
+material = SubResource("Mat_metal")
+size = Vector3(0.03, 0.03, 0.13)
+
+[sub_resource type="CylinderMesh" id="Mesh_shade"]
+material = SubResource("Mat_metal")
+top_radius = 0.035
+bottom_radius = 0.09
+height = 0.07
+radial_segments = 10
+rings = 1
+
+[sub_resource type="SphereMesh" id="Mesh_bulb"]
+material = SubResource("Mat_bulb")
+radius = 0.03
+height = 0.06
+radial_segments = 8
+rings = 4
+
+[sub_resource type="BoxMesh" id="Mesh_cage"]
+material = SubResource("Mat_metal")
+size = Vector3(0.008, 0.06, 0.008)
+
+[node name="WallLamp" type="Node3D"]
+
+[node name="Plate" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.015)
+mesh = SubResource("Mesh_plate")
+
+[node name="Arm" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.06, 0.09)
+mesh = SubResource("Mesh_arm")
+
+[node name="Shade" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.06, 0.17)
+mesh = SubResource("Mesh_shade")
+cast_shadow = 0
+
+[node name="Bulb" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.01, 0.17)
+mesh = SubResource("Mesh_bulb")
+cast_shadow = 0
+
+[node name="CageL" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.045, 0.0, 0.17)
+mesh = SubResource("Mesh_cage")
+cast_shadow = 0
+
+[node name="CageR" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.045, 0.0, 0.17)
+mesh = SubResource("Mesh_cage")
+cast_shadow = 0
+
+[node name="Light" type="OmniLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.03, 0.2)
+light_color = Color(1, 0.72, 0.42, 1)
+light_energy = 1.4
+shadow_enabled = true
+omni_range = 5.0
+omni_attenuation = 1.4
+script = ExtResource("1_flicker")
+flicker_chance = 0.04

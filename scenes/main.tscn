@@ -10,6 +10,7 @@
 [ext_resource type="PackedScene" path="res://scenes/props/thermal_bottle.tscn" id="8_bottle"]
 [ext_resource type="PackedScene" path="res://scenes/props/bag.tscn" id="9_bag"]
 [ext_resource type="PackedScene" path="res://scenes/props/ice_box.tscn" id="10_icebox"]
+[ext_resource type="PackedScene" path="res://scenes/props/wall_lamp.tscn" id="11_walllamp"]
 
 [sub_resource type="Environment" id="Environment_main"]
 background_mode = 1
@@ -198,3 +199,6 @@ transform = Transform3D(0.94, 0, 0.342, 0, 1, 0, -0.342, 0, 0.94, -2.55, 0.02, 2
 
 [node name="IceBox" parent="Props" instance=ExtResource("10_icebox")]
 transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, -2.7, 0.02, 0.0)
+
+[node name="WallLamp" parent="." instance=ExtResource("11_walllamp")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.65, 2.35, 2.7)
