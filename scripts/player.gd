@@ -18,6 +18,7 @@ const BOB_AMP: float = 0.04
 @onready var ray: RayCast3D = $Head/Camera3D/InteractRay
 @onready var prompt: Label = $HUD/Prompt
 @onready var crosshair: ColorRect = $HUD/Crosshair
+@onready var flashlight: SpotLight3D = $Head/Camera3D/Flashlight
 
 var gravity: float = ProjectSettings.get_setting("physics/3d/default_gravity")
 var _focused: Node = null
@@ -27,7 +28,7 @@ var _seat_tween: Tween
 
 
 func _ready() -> void:
-	_setup_input()
+	GameInput.ensure()
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 	ray.target_position = Vector3(0, 0, -interact_distance)
 	ray.add_exception(self)
@@ -45,6 +46,8 @@ func _unhandled_input(event: InputEvent) -> void:
 		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 	elif event is InputEventMouseButton and event.pressed and Input.mouse_mode != Input.MOUSE_MODE_CAPTURED:
 		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+	elif event.is_action_pressed("flashlight"):
+		flashlight.visible = not flashlight.visible
 	elif event.is_action_pressed("interact") and _focused != null:
 		_focused.interact(self)
 
@@ -88,26 +91,6 @@ func _update_focus() -> void:
 			target = hit
 	_focused = target
 	prompt.text = "[E] " + _focused.get_prompt() if _focused != null else ""
-
-
-func _setup_input() -> void:
-	# Default key bindings. Kept in code for now; can move to Project Settings > Input Map later.
-	var binds: Dictionary = {
-		"move_forward": KEY_W,
-		"move_back": KEY_S,
-		"move_left": KEY_A,
-		"move_right": KEY_D,
-		"jump": KEY_SPACE,
-		"sprint": KEY_SHIFT,
-		"interact": KEY_E,
-	}
-	for action: String in binds:
-		if InputMap.has_action(action):
-			continue
-		InputMap.add_action(action)
-		var ev := InputEventKey.new()
-		ev.physical_keycode = binds[action]
-		InputMap.action_add_event(action, ev)
 
 
 # --- seating (terminal, chairs) -------------------------------------------

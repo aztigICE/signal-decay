@@ -24,6 +24,7 @@ func _ready() -> void:
 	_apply_style()
 	output.clear()
 	input.editable = false
+	input.keep_editing_on_text_submit = true
 	input.text_submitted.connect(_on_submitted)
 	input.gui_input.connect(_on_input_gui)
 
@@ -143,6 +144,7 @@ func _set_ready() -> void:
 	_busy = false
 	input.editable = true
 	input.grab_focus()
+	input.edit()
 
 
 func _print(text: String) -> void:

@@ -12,9 +12,9 @@ var _player: Node = null
 
 func _ready() -> void:
 	prompt_text = "Use terminal"
-	var mat := StandardMaterial3D.new()
-	mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-	mat.albedo_texture = sub_viewport.get_texture()
+	var mat := ShaderMaterial.new()
+	mat.shader = preload("res://shaders/lcd_screen.gdshader")
+	mat.set_shader_parameter("screen_tex", sub_viewport.get_texture())
 	screen.material_override = mat
 	ui.exit_requested.connect(_stand_up)
 	set_process_input(false)
