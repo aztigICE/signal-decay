@@ -1,0 +1,15 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="PackedScene" path="res://assets/models/retroworld/3D_Retro_World 0.01/GLTF/Rocks/Rock_07.glb" id="1_model"]
+
+[sub_resource type="BoxShape3D" id="Shape_main"]
+size = Vector3(0.608, 0.65, 0.712)
+
+[node name="rock_07" type="StaticBody3D"]
+
+[node name="Model" parent="." instance=ExtResource("1_model")]
+
+[node name="Collision" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.085, 0)
+shape = SubResource("Shape_main")
+

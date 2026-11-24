@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="PackedScene" path="res://assets/models/retroworld/3D_Retro_World 0.01/GLTF/Roads/Tower_01.glb" id="1_model"]
+
+[node name="energy_tower" type="Node3D"]
+
+[node name="Model" parent="." instance=ExtResource("1_model")]
+

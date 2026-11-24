@@ -1,0 +1,27 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="PackedScene" path="res://assets/models/retroworld/3D_Retro_World 0.01/GLTF/Vegetation/Trees/Douglas Fir/Douglas_Fir_C.glb" id="1_model"]
+
+[sub_resource type="CylinderShape3D" id="Shape_main"]
+radius = 0.35
+height = 5
+
+[node name="fir_c" type="StaticBody3D"]
+
+[node name="Model" parent="." instance=ExtResource("1_model")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -20.2889, 0, 0.0282)
+
+[node name="C_LOD1" parent="Model/DouglasFir_3" index="1"]
+visible = false
+
+[node name="C_LOD2" parent="Model/DouglasFir_3" index="2"]
+visible = false
+
+[node name="C_LOD3" parent="Model/DouglasFir_3" index="3"]
+visible = false
+
+[node name="Collision" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5, 0)
+shape = SubResource("Shape_main")
+
+[editable path="Model"]

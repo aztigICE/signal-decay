@@ -4,13 +4,19 @@
 [ext_resource type="Script" path="res://scripts/light_switch.gd" id="2_switch"]
 [ext_resource type="PackedScene" path="res://scenes/terminal.tscn" id="3_terminal"]
 [ext_resource type="PackedScene" path="res://scenes/postfx.tscn" id="4_postfx"]
+[ext_resource type="PackedScene" path="res://scenes/outdoors.tscn" id="5_outdoors"]
+[ext_resource type="PackedScene" path="res://scenes/props/fire_extinguisher.tscn" id="6_ext"]
+[ext_resource type="PackedScene" path="res://scenes/props/lantern.tscn" id="7_lantern"]
+[ext_resource type="PackedScene" path="res://scenes/props/thermal_bottle.tscn" id="8_bottle"]
+[ext_resource type="PackedScene" path="res://scenes/props/bag.tscn" id="9_bag"]
+[ext_resource type="PackedScene" path="res://scenes/props/ice_box.tscn" id="10_icebox"]
 
 [sub_resource type="Environment" id="Environment_main"]
 background_mode = 1
 background_color = Color(0.02, 0.025, 0.035, 1)
 ambient_light_source = 2
 ambient_light_color = Color(0.35, 0.38, 0.45, 1)
-ambient_light_energy = 0.25
+ambient_light_energy = 0.45
 tonemap_mode = 2
 ssao_enabled = true
 glow_enabled = true
@@ -18,8 +24,8 @@ glow_intensity = 0.6
 glow_bloom = 0.08
 glow_hdr_threshold = 0.9
 fog_enabled = true
-fog_light_color = Color(0.04, 0.05, 0.07, 1)
-fog_density = 0.075
+fog_light_color = Color(0.11, 0.13, 0.17, 1)
+fog_density = 0.06
 
 [sub_resource type="StandardMaterial3D" id="Mat_wall"]
 albedo_color = Color(0.42, 0.45, 0.41, 1)
@@ -31,10 +37,6 @@ roughness = 0.9
 
 [sub_resource type="StandardMaterial3D" id="Mat_ceiling"]
 albedo_color = Color(0.5, 0.5, 0.47, 1)
-
-[sub_resource type="StandardMaterial3D" id="Mat_ground"]
-albedo_color = Color(0.12, 0.14, 0.1, 1)
-roughness = 1.0
 
 [sub_resource type="StandardMaterial3D" id="Mat_dark"]
 albedo_color = Color(0.13, 0.13, 0.14, 1)
@@ -69,16 +71,10 @@ size = Vector3(0.12, 0.18, 0.05)
 environment = SubResource("Environment_main")
 
 [node name="Moonlight" type="DirectionalLight3D" parent="."]
-transform = Transform3D(0.866, 0, 0.5, 0.383, 0.643, -0.663, -0.321, 0.766, 0.557, 0, 10, 0)
+transform = Transform3D(0.866, 0.383, -0.321, 0, 0.643, 0.766, 0.5, -0.663, 0.557, 0, 10, 0)
 light_color = Color(0.6, 0.7, 0.9, 1)
-light_energy = 0.25
+light_energy = 0.5
 shadow_enabled = true
-
-[node name="Ground" type="CSGBox3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.1, 0)
-use_collision = true
-size = Vector3(60, 0.2, 60)
-material = SubResource("Mat_ground")
 
 [node name="Room" type="CSGCombiner3D" parent="."]
 use_collision = true
@@ -136,7 +132,7 @@ size = Vector3(0.4, 1.2, 1.4)
 material = SubResource("Mat_dark")
 
 [node name="Chair" type="CSGCombiner3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.35, 0, -1.35)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -1.35)
 use_collision = true
 
 [node name="Seat" type="CSGBox3D" parent="Chair"]
@@ -183,3 +179,22 @@ shape = SubResource("Shape_switch")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.05, 1.2)
 
 [node name="PostFX" parent="." instance=ExtResource("4_postfx")]
+
+[node name="Outdoors" parent="." instance=ExtResource("5_outdoors")]
+
+[node name="Props" type="Node3D" parent="."]
+
+[node name="FireExtinguisher" parent="Props" instance=ExtResource("6_ext")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 2.75, 0.02, 2.35)
+
+[node name="Lantern" parent="Props" instance=ExtResource("7_lantern")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, -2.75, 1.2, 1.0)
+
+[node name="ThermalBottle" parent="Props" instance=ExtResource("8_bottle")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.6, 0.77, -2.05)
+
+[node name="Bag" parent="Props" instance=ExtResource("9_bag")]
+transform = Transform3D(0.94, 0, 0.342, 0, 1, 0, -0.342, 0, 0.94, -2.55, 0.02, 2.1)
+
+[node name="IceBox" parent="Props" instance=ExtResource("10_icebox")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, -2.7, 0.02, 0.0)

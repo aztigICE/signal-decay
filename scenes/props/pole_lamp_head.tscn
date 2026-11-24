@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="PackedScene" path="res://assets/models/retroworld/Utility Infrastructure/Electric Utilities/Poles/prop_lamp.glb" id="1_model"]
+
+[node name="pole_lamp_head" type="Node3D"]
+
+[node name="Model" parent="." instance=ExtResource("1_model")]
+

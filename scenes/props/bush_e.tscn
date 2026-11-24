@@ -1,0 +1,16 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="PackedScene" path="res://assets/models/retroworld/3D_Retro_World 0.01/GLTF/Vegetation/Vegetation/Bush_A/Bush_E.glb" id="1_model"]
+
+[node name="bush_e" type="Node3D"]
+
+[node name="Model" parent="." instance=ExtResource("1_model")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11.937, 0, 0.0518)
+
+[node name="BushE_LOD1" parent="Model/Bush_E" index="1"]
+visible = false
+
+[node name="BushE_LOD2" parent="Model/Bush_E" index="2"]
+visible = false
+
+[editable path="Model"]
