@@ -1,0 +1,71 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://ui/terminal_ui.gd" id="1_ui"]
+[ext_resource type="Shader" path="res://ui/crt.gdshader" id="2_crt"]
+
+[sub_resource type="ShaderMaterial" id="Mat_crt"]
+shader = ExtResource("2_crt")
+
+[node name="TerminalUI" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_ui")
+
+[node name="Background" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.015, 0.03, 0.02, 1)
+
+[node name="Margin" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 32
+theme_override_constants/margin_top = 28
+theme_override_constants/margin_right = 32
+theme_override_constants/margin_bottom = 28
+
+[node name="VBox" type="VBoxContainer" parent="Margin"]
+layout_mode = 2
+
+[node name="Output" type="RichTextLabel" parent="Margin/VBox"]
+layout_mode = 2
+size_flags_vertical = 3
+focus_mode = 0
+bbcode_enabled = true
+scroll_following = true
+
+[node name="InputRow" type="HBoxContainer" parent="Margin/VBox"]
+layout_mode = 2
+
+[node name="PromptLabel" type="Label" parent="Margin/VBox/InputRow"]
+layout_mode = 2
+text = ">"
+
+[node name="Input" type="LineEdit" parent="Margin/VBox/InputRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+context_menu_enabled = false
+caret_blink = true
+
+[node name="Scanlines" type="ColorRect" parent="."]
+material = SubResource("Mat_crt")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2

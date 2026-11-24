@@ -1,0 +1,90 @@
+[gd_scene load_steps=14 format=3]
+
+[ext_resource type="Script" path="res://scripts/terminal.gd" id="1_term"]
+[ext_resource type="PackedScene" path="res://ui/terminal_ui.tscn" id="2_ui"]
+
+[sub_resource type="StandardMaterial3D" id="Mat_desk"]
+albedo_color = Color(0.36, 0.3, 0.24, 1)
+roughness = 0.8
+
+[sub_resource type="BoxMesh" id="Mesh_desktop"]
+material = SubResource("Mat_desk")
+size = Vector3(1.6, 0.05, 0.7)
+
+[sub_resource type="BoxMesh" id="Mesh_side"]
+material = SubResource("Mat_desk")
+size = Vector3(0.05, 0.7, 0.7)
+
+[sub_resource type="StandardMaterial3D" id="Mat_monitor"]
+albedo_color = Color(0.72, 0.69, 0.6, 1)
+roughness = 0.6
+
+[sub_resource type="BoxMesh" id="Mesh_monitor"]
+material = SubResource("Mat_monitor")
+size = Vector3(0.52, 0.42, 0.42)
+
+[sub_resource type="QuadMesh" id="Mesh_screen"]
+size = Vector2(0.42, 0.315)
+
+[sub_resource type="StandardMaterial3D" id="Mat_keyboard"]
+albedo_color = Color(0.62, 0.6, 0.54, 1)
+
+[sub_resource type="BoxMesh" id="Mesh_keyboard"]
+material = SubResource("Mat_keyboard")
+size = Vector3(0.45, 0.03, 0.15)
+
+[sub_resource type="BoxShape3D" id="Shape_desk"]
+size = Vector3(1.6, 0.75, 0.7)
+
+[sub_resource type="BoxShape3D" id="Shape_monitor"]
+size = Vector3(0.52, 0.42, 0.42)
+
+[node name="Terminal" type="StaticBody3D"]
+script = ExtResource("1_term")
+
+[node name="DeskTop" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.725, 0)
+mesh = SubResource("Mesh_desktop")
+
+[node name="SideL" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.775, 0.35, 0)
+mesh = SubResource("Mesh_side")
+
+[node name="SideR" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.775, 0.35, 0)
+mesh = SubResource("Mesh_side")
+
+[node name="Keyboard" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.765, 0.17)
+mesh = SubResource("Mesh_keyboard")
+
+[node name="Monitor" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.98, -0.1)
+mesh = SubResource("Mesh_monitor")
+
+[node name="Screen" type="MeshInstance3D" parent="Monitor"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.01, 0.212)
+mesh = SubResource("Mesh_screen")
+
+[node name="DeskCollision" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.375, 0)
+shape = SubResource("Shape_desk")
+
+[node name="MonitorCollision" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.98, -0.1)
+shape = SubResource("Shape_monitor")
+
+[node name="CameraAnchor" type="Marker3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.99, 0.42)
+
+[node name="ScreenGlow" type="OmniLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.99, 0.35)
+light_color = Color(0.4, 1, 0.5, 1)
+light_energy = 0.5
+omni_range = 1.8
+
+[node name="SubViewport" type="SubViewport" parent="."]
+size = Vector2i(800, 600)
+render_target_update_mode = 4
+
+[node name="TerminalUI" parent="SubViewport" instance=ExtResource("2_ui")]

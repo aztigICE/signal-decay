@@ -17,10 +17,13 @@ const BOB_AMP: float = 0.04
 @onready var camera: Camera3D = $Head/Camera3D
 @onready var ray: RayCast3D = $Head/Camera3D/InteractRay
 @onready var prompt: Label = $HUD/Prompt
+@onready var crosshair: ColorRect = $HUD/Crosshair
 
 var gravity: float = ProjectSettings.get_setting("physics/3d/default_gravity")
 var _focused: Node = null
 var _bob_t: float = 0.0
+var _seated: bool = false
+var _seat_tween: Tween
 
 
 func _ready() -> void:
@@ -32,6 +35,8 @@ func _ready() -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
+	if _seated:
+		return
 	if event is InputEventMouseMotion and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
 		rotate_y(-event.relative.x * mouse_sensitivity)
 		head.rotate_x(-event.relative.y * mouse_sensitivity)
@@ -45,6 +50,8 @@ func _unhandled_input(event: InputEvent) -> void:
 
 
 func _physics_process(delta: float) -> void:
+	if _seated:
+		return
 	if not is_on_floor():
 		velocity.y -= gravity * delta
 	elif Input.is_action_just_pressed("jump"):
@@ -101,3 +108,36 @@ func _setup_input() -> void:
 		var ev := InputEventKey.new()
 		ev.physical_keycode = binds[action]
 		InputMap.action_add_event(action, ev)
+
+
+# --- seating (terminal, chairs) -------------------------------------------
+
+func enter_seat(anchor: Node3D) -> void:
+	_seated = true
+	velocity = Vector3.ZERO
+	prompt.text = ""
+	crosshair.visible = false
+	_focused = null
+	_tween_camera(anchor.global_transform)
+
+
+func exit_seat() -> void:
+	_tween_camera(head.global_transform)
+	_seat_tween.tween_callback(_on_unseated)
+
+
+func is_seated() -> bool:
+	return _seated
+
+
+func _tween_camera(target: Transform3D) -> void:
+	if _seat_tween != null:
+		_seat_tween.kill()
+	_seat_tween = create_tween().set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	_seat_tween.tween_property(camera, "global_transform", target, 0.45)
+
+
+func _on_unseated() -> void:
+	camera.transform = Transform3D.IDENTITY
+	crosshair.visible = true
+	_seated = false
