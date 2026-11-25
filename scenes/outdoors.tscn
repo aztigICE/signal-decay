@@ -40,6 +40,7 @@
 [ext_resource type="PackedScene" path="res://scenes/props/trash_can.tscn" id="38_trash_can"]
 [ext_resource type="PackedScene" path="res://scenes/props/road_sign.tscn" id="39_road_sign"]
 [ext_resource type="PackedScene" path="res://scenes/props/energy_tower.tscn" id="40_energy_tower"]
+[ext_resource type="PackedScene" path="res://scenes/props/satellite_dish.tscn" id="41_satellite_dish"]
 
 [sub_resource type="Gradient" id="Grad_ground"]
 offsets = PackedFloat32Array(0, 0.55, 1)
@@ -1175,3 +1176,6 @@ transform = Transform3D(-0.94, 0, -0.342, 0, 1, 0, 0.342, 0, -0.94, 3.6, 0, 11.2
 
 [node name="Tower" parent="Details" instance=ExtResource("40_energy_tower")]
 transform = Transform3D(0.866, 0, 0.5, 0, 1, 0, -0.5, 0, 0.866, -34, 0, -26)
+
+[node name="SatelliteDish" parent="." instance=ExtResource("41_satellite_dish")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14, 0, -4)
