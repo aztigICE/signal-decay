@@ -93,6 +93,11 @@ func _update_focus() -> void:
 	prompt.text = "[E] " + _focused.get_prompt() if _focused != null else ""
 
 
+## The interactable under the crosshair, or null. Hold-to-use objects check this.
+func get_focused() -> Node:
+	return _focused
+
+
 # --- seating (terminal, chairs) -------------------------------------------
 
 func enter_seat(anchor: Node3D) -> void:

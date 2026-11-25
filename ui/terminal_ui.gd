@@ -8,6 +8,7 @@ signal exit_requested
 const TEXT_COLOR := Color(0.4, 1.0, 0.5)
 const DIM_COLOR := Color(0.22, 0.6, 0.3)
 const WARN_HEX := "e0a040"
+const GOOD_HEX := "80ffa0"
 const FONT_SIZE := 22
 
 @onready var output: RichTextLabel = $Margin/VBox/Output
@@ -27,6 +28,7 @@ func _ready() -> void:
 	input.keep_editing_on_text_submit = true
 	input.text_submitted.connect(_on_submitted)
 	input.gui_input.connect(_on_input_gui)
+	Station.target_lost.connect(_on_target_lost)
 
 
 func activate() -> void:
@@ -50,18 +52,23 @@ func _run(line: String) -> void:
 			_print("Commands:")
 			_print("  help     show this list")
 			_print("  status   station status")
-			_print("  scan     sweep for signals")
+			_print("  scan     sweep for a signal")
+			_print("  target   show the current signal")
+			_print("  lock     lock on to the signal (aim the dish first)")
+			_print("  drop     give up on the current signal")
 			_print("  clear    clear the screen")
 			_print("  whoami   current operator")
 			_print("  exit     log out (or press Esc)")
 		"status":
-			_print("STATION STATUS")
-			_print("  Power ........ OK")
-			_print("  Dish ......... [color=#%s]NOT CONNECTED[/color]" % WARN_HEX)
-			_print("  Storage ...... 0 / 4 slots")
-			_print("  Points ....... 0")
+			_status()
 		"scan":
 			await _scan()
+		"target":
+			_show_target()
+		"lock":
+			await _lock()
+		"drop":
+			_drop()
 		"clear":
 			output.clear()
 		"whoami":
@@ -72,16 +79,96 @@ func _run(line: String) -> void:
 			_print("Unknown command: %s. Type 'help'." % _escape(cmd))
 
 
+func _status() -> void:
+	_print("STATION STATUS")
+	_print("  Power ........ OK")
+	if Station.has_dish():
+		_print("  Dish ......... MANUAL (control panel outside)")
+	else:
+		_print("  Dish ......... [color=#%s]NOT CONNECTED[/color]" % WARN_HEX)
+	var t: SignalTarget = Station.target
+	if t != null:
+		_print("  Target ....... %s  %d%%" % [t.designation, roundi(t.strength(Station.now()) * 100.0)])
+	else:
+		_print("  Target ....... none")
+	_print("  Locked ....... %d" % Station.signals_locked)
+	_print("  Points ....... %d" % Station.points)
+
+
 func _scan() -> void:
+	if not Station.has_dish():
+		_print("[color=#%s]Dish controller not connected.[/color]" % WARN_HEX)
+		return
+	if Station.target != null:
+		_print("Already tracking %s. Use 'target', 'lock' or 'drop'." % Station.target.designation)
+		return
+	await _dots("Sweeping bands", 6, 0.3)
+	var t: SignalTarget = Station.scan()
+	_print("[color=#%s]Signal found: %s[/color]" % [GOOD_HEX, t.designation])
+	_print_target(t)
+	_print("Align the dish at the control panel outside, then run 'lock'.")
+
+
+func _show_target() -> void:
+	var t: SignalTarget = Station.target
+	if t == null:
+		_print("No signal. Run 'scan'.")
+		return
+	_print("Tracking %s" % t.designation)
+	_print_target(t)
+
+
+func _print_target(t: SignalTarget) -> void:
+	var now := Station.now()
+	var left := roundi(t.seconds_left(now))
+	_print("  Band ......... %s  (%.3f GHz)" % [t.band, t.frequency_ghz])
+	_print("  Azimuth ...... %05.1f°" % t.azimuth)
+	_print("  Elevation .... %05.1f°" % t.elevation)
+	_print("  Strength ..... %d%%  (gone in %d:%02d)" % [roundi(t.strength(now) * 100.0), left / 60, left % 60])
+
+
+func _lock() -> void:
+	if Station.target == null:
+		_print("No signal to lock. Run 'scan'.")
+		return
+	await _dots("Locking receiver", 5, 0.3)
+	if Station.target == null:
+		return  # faded while we waited; _on_target_lost already printed it
+	var q := Station.lock_quality()
+	var filled := roundi(q * 20.0)
+	var col := GOOD_HEX if q >= Station.LOCK_THRESHOLD else WARN_HEX
+	_print("  Lock  [lb][color=#%s]%s[/color]%s]  %d%%" % [col, "#".repeat(filled), "-".repeat(20 - filled), roundi(q * 100.0)])
+	var designation: String = Station.target.designation
+	var reward := Station.try_lock()
+	if reward > 0:
+		_print("[color=#%s]LOCK ACQUIRED: %s[/color]" % [GOOD_HEX, designation])
+		_print("  +%d points  (total %d)" % [reward, Station.points])
+	elif q <= 0.0:
+		_print("[color=#%s]No signal at this heading.[/color] Check the dish." % WARN_HEX)
+	else:
+		_print("[color=#%s]Lock too weak.[/color] Need %d%%. Fine-tune the dish." % [WARN_HEX, roundi(Station.LOCK_THRESHOLD * 100.0)])
+
+
+func _drop() -> void:
+	if Station.target == null:
+		_print("Nothing to drop.")
+		return
+	_print("Dropped %s." % Station.target.designation)
+	Station.drop_target()
+
+
+func _on_target_lost(t: SignalTarget) -> void:
+	_print("[color=#%s]Signal %s faded out.[/color]" % [WARN_HEX, t.designation])
+
+
+func _dots(label: String, count: int, interval: float) -> void:
 	_busy = true
 	input.editable = false
-	output.append_text("Sweeping bands")
-	for i in 6:
-		await get_tree().create_timer(0.3).timeout
+	output.append_text(label)
+	for i in count:
+		await get_tree().create_timer(interval).timeout
 		output.append_text(".")
 	_print("")
-	_print("[color=#%s]No signals. Dish is not aligned.[/color]" % WARN_HEX)
-	_print("Align the dish outside to receive transmissions.")
 	_set_ready()
 
 
@@ -93,7 +180,7 @@ func _boot() -> void:
 		"",
 		"Memory check ............ OK",
 		"Receiver ................ OK",
-		"Dish controller ......... [color=#%s]NOT CONNECTED[/color]" % WARN_HEX,
+		"Dish controller ......... MANUAL",
 		"Storage ................. 0 / 4 slots",
 		"",
 		"Type 'help' for commands. Esc to stand up.",

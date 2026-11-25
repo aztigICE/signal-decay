@@ -22,12 +22,14 @@ const MAX_ELEVATION := 90.0
 		if not is_slewing:
 			target_azimuth = azimuth
 		_apply_pose()
+		aim_changed.emit(azimuth, elevation)
 @export_range(MIN_ELEVATION, MAX_ELEVATION, 0.1) var elevation := 35.0:
 	set(value):
 		elevation = clampf(value, MIN_ELEVATION, MAX_ELEVATION)
 		if not is_slewing:
 			target_elevation = elevation
 		_apply_pose()
+		aim_changed.emit(azimuth, elevation)
 ## Motor speed in degrees per second.
 @export var slew_speed := 12.0
 ## Applied to every mesh in the model, so a re-import of the FBX can't undo it.
@@ -44,7 +46,7 @@ var _el_bone := -1
 
 func _ready() -> void:
 	if surface_material:
-		for mesh in find_children("*", "MeshInstance3D", true, false):
+		for mesh in $Model.find_children("*", "MeshInstance3D", true, false):
 			(mesh as MeshInstance3D).material_override = surface_material
 	_skeleton = find_child("Skeleton3D", true, false) as Skeleton3D
 	if _skeleton == null:
@@ -53,6 +55,7 @@ func _ready() -> void:
 	_az_bone = _skeleton.find_bone(AZIMUTH_BONE)
 	_el_bone = _skeleton.find_bone(ELEVATION_BONE)
 	_apply_pose()
+	Station.register_dish(self)
 
 
 func _process(delta: float) -> void:
@@ -66,7 +69,6 @@ func _process(delta: float) -> void:
 		is_slewing = false
 		azimuth = target_azimuth
 		slew_finished.emit()
-	aim_changed.emit(azimuth, elevation)
 
 
 ## Start slewing the motors toward a bearing and elevation.
@@ -74,6 +76,13 @@ func slew_to(new_azimuth: float, new_elevation: float) -> void:
 	target_azimuth = fposmod(new_azimuth, 360.0)
 	target_elevation = clampf(new_elevation, MIN_ELEVATION, MAX_ELEVATION)
 	is_slewing = true
+
+
+## Turn the dish by hand (used by the control panel). Cancels any motor slew.
+func nudge(d_azimuth: float, d_elevation: float) -> void:
+	is_slewing = false
+	azimuth += d_azimuth
+	elevation += d_elevation
 
 
 ## World-space unit vector the dish is pointing along.

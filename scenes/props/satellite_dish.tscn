@@ -1,9 +1,10 @@
-[gd_scene load_steps=8 format=3]
+[gd_scene load_steps=9 format=3]
 
 [ext_resource type="Script" path="res://scripts/satellite_dish.gd" id="1_script"]
 [ext_resource type="PackedScene" path="res://assets/models/dish/Satellite+dish_Blender+Internal+render.fbx" id="2_model"]
 [ext_resource type="Texture2D" path="res://assets/models/dish/textures/Satellite_dish_Col.png" id="3_col"]
 [ext_resource type="Texture2D" path="res://assets/models/dish/textures/Satellite_dish_NOR2.png" id="4_nor"]
+[ext_resource type="PackedScene" path="res://scenes/props/dish_control_panel.tscn" id="5_panel"]
 
 [sub_resource type="StandardMaterial3D" id="Mat_dish"]
 albedo_texture = ExtResource("3_col")
@@ -34,3 +35,7 @@ shape = SubResource("Shape_mast")
 [node name="BaseCollision" type="CollisionShape3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
 shape = SubResource("Shape_base")
+
+[node name="ControlPanel" parent="." instance=ExtResource("5_panel")]
+position = Vector3(-1.5, 0, 0.9)
+rotation = Vector3(0, -1.0647, 0)

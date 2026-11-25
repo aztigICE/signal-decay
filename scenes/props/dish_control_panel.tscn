@@ -1,0 +1,195 @@
+[gd_scene load_steps=14 format=3]
+
+[ext_resource type="Script" path="res://scripts/dish_control_panel.gd" id="1_panel"]
+[ext_resource type="Script" path="res://scripts/dish_aim_button.gd" id="2_button"]
+
+[sub_resource type="StandardMaterial3D" id="Mat_housing"]
+albedo_color = Color(0.28, 0.31, 0.27, 1)
+metallic = 0.4
+roughness = 0.7
+
+[sub_resource type="StandardMaterial3D" id="Mat_screen"]
+albedo_color = Color(0.03, 0.025, 0.02, 1)
+roughness = 0.3
+
+[sub_resource type="StandardMaterial3D" id="Mat_btn_az"]
+albedo_color = Color(0.55, 0.12, 0.1, 1)
+roughness = 0.5
+
+[sub_resource type="StandardMaterial3D" id="Mat_btn_el"]
+albedo_color = Color(0.62, 0.5, 0.12, 1)
+roughness = 0.5
+
+[sub_resource type="BoxMesh" id="Mesh_base"]
+size = Vector3(0.4, 0.05, 0.3)
+material = SubResource("Mat_housing")
+
+[sub_resource type="BoxMesh" id="Mesh_post"]
+size = Vector3(0.1, 1.1, 0.1)
+material = SubResource("Mat_housing")
+
+[sub_resource type="BoxMesh" id="Mesh_housing"]
+size = Vector3(0.6, 0.44, 0.12)
+material = SubResource("Mat_housing")
+
+[sub_resource type="QuadMesh" id="Mesh_screen"]
+size = Vector2(0.44, 0.15)
+material = SubResource("Mat_screen")
+
+[sub_resource type="CylinderMesh" id="Mesh_btn"]
+top_radius = 0.03
+bottom_radius = 0.032
+height = 0.03
+
+[sub_resource type="BoxShape3D" id="Shape_body"]
+size = Vector3(0.6, 1.4, 0.3)
+
+[sub_resource type="BoxShape3D" id="Shape_btn"]
+size = Vector3(0.08, 0.08, 0.05)
+
+[node name="DishControlPanel" type="Node3D"]
+script = ExtResource("1_panel")
+
+[node name="Body" type="StaticBody3D" parent="."]
+
+[node name="Collision" type="CollisionShape3D" parent="Body"]
+position = Vector3(0, 0.7, -0.05)
+shape = SubResource("Shape_body")
+
+[node name="Base" type="MeshInstance3D" parent="."]
+position = Vector3(0, 0.025, 0)
+mesh = SubResource("Mesh_base")
+
+[node name="Post" type="MeshInstance3D" parent="."]
+position = Vector3(0, 0.55, -0.02)
+mesh = SubResource("Mesh_post")
+
+[node name="Face" type="Node3D" parent="."]
+position = Vector3(0, 1.15, 0)
+rotation = Vector3(-0.5236, 0, 0)
+
+[node name="Housing" type="MeshInstance3D" parent="Face"]
+position = Vector3(0, 0, -0.06)
+mesh = SubResource("Mesh_housing")
+
+[node name="Title" type="Label3D" parent="Face"]
+position = Vector3(0, 0.185, 0.002)
+pixel_size = 0.0007
+text = "DISH CONTROL - MANUAL"
+font_size = 32
+modulate = Color(0.85, 0.85, 0.8, 1)
+outline_size = 0
+
+[node name="Screen" type="MeshInstance3D" parent="Face"]
+position = Vector3(0, 0.07, 0.002)
+mesh = SubResource("Mesh_screen")
+
+[node name="Display" type="Label3D" parent="Face"]
+position = Vector3(0, 0.07, 0.005)
+pixel_size = 0.001
+text = "AZ 000.0°
+EL 000.0°"
+font_size = 56
+modulate = Color(1, 0.62, 0.15, 1)
+outline_size = 0
+line_spacing = -6.0
+
+[node name="AzLeft" type="StaticBody3D" parent="Face"]
+position = Vector3(-0.21, -0.1, 0)
+script = ExtResource("2_button")
+prompt_text = "Turn dish left"
+axis = 0
+direction = -1.0
+
+[node name="Cap" type="MeshInstance3D" parent="Face/AzLeft"]
+position = Vector3(0, 0, 0.015)
+rotation = Vector3(1.5708, 0, 0)
+mesh = SubResource("Mesh_btn")
+surface_material_override/0 = SubResource("Mat_btn_az")
+
+[node name="Collision" type="CollisionShape3D" parent="Face/AzLeft"]
+position = Vector3(0, 0, 0.025)
+shape = SubResource("Shape_btn")
+
+[node name="Label" type="Label3D" parent="Face/AzLeft"]
+position = Vector3(0, -0.065, 0.002)
+pixel_size = 0.0008
+text = "AZ -"
+font_size = 32
+modulate = Color(0.85, 0.85, 0.8, 1)
+outline_size = 0
+
+[node name="AzRight" type="StaticBody3D" parent="Face"]
+position = Vector3(-0.09, -0.1, 0)
+script = ExtResource("2_button")
+prompt_text = "Turn dish right"
+axis = 0
+direction = 1.0
+
+[node name="Cap" type="MeshInstance3D" parent="Face/AzRight"]
+position = Vector3(0, 0, 0.015)
+rotation = Vector3(1.5708, 0, 0)
+mesh = SubResource("Mesh_btn")
+surface_material_override/0 = SubResource("Mat_btn_az")
+
+[node name="Collision" type="CollisionShape3D" parent="Face/AzRight"]
+position = Vector3(0, 0, 0.025)
+shape = SubResource("Shape_btn")
+
+[node name="Label" type="Label3D" parent="Face/AzRight"]
+position = Vector3(0, -0.065, 0.002)
+pixel_size = 0.0008
+text = "AZ +"
+font_size = 32
+modulate = Color(0.85, 0.85, 0.8, 1)
+outline_size = 0
+
+[node name="ElDown" type="StaticBody3D" parent="Face"]
+position = Vector3(0.09, -0.1, 0)
+script = ExtResource("2_button")
+prompt_text = "Tilt dish down"
+axis = 1
+direction = -1.0
+
+[node name="Cap" type="MeshInstance3D" parent="Face/ElDown"]
+position = Vector3(0, 0, 0.015)
+rotation = Vector3(1.5708, 0, 0)
+mesh = SubResource("Mesh_btn")
+surface_material_override/0 = SubResource("Mat_btn_el")
+
+[node name="Collision" type="CollisionShape3D" parent="Face/ElDown"]
+position = Vector3(0, 0, 0.025)
+shape = SubResource("Shape_btn")
+
+[node name="Label" type="Label3D" parent="Face/ElDown"]
+position = Vector3(0, -0.065, 0.002)
+pixel_size = 0.0008
+text = "EL -"
+font_size = 32
+modulate = Color(0.85, 0.85, 0.8, 1)
+outline_size = 0
+
+[node name="ElUp" type="StaticBody3D" parent="Face"]
+position = Vector3(0.21, -0.1, 0)
+script = ExtResource("2_button")
+prompt_text = "Tilt dish up"
+axis = 1
+direction = 1.0
+
+[node name="Cap" type="MeshInstance3D" parent="Face/ElUp"]
+position = Vector3(0, 0, 0.015)
+rotation = Vector3(1.5708, 0, 0)
+mesh = SubResource("Mesh_btn")
+surface_material_override/0 = SubResource("Mat_btn_el")
+
+[node name="Collision" type="CollisionShape3D" parent="Face/ElUp"]
+position = Vector3(0, 0, 0.025)
+shape = SubResource("Shape_btn")
+
+[node name="Label" type="Label3D" parent="Face/ElUp"]
+position = Vector3(0, -0.065, 0.002)
+pixel_size = 0.0008
+text = "EL +"
+font_size = 32
+modulate = Color(0.85, 0.85, 0.8, 1)
+outline_size = 0

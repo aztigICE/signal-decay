@@ -14,6 +14,10 @@ config/name="SignalDecay"
 config/features=PackedStringArray("4.7", "Forward Plus")
 config/icon="res://icon.svg"
 
+[autoload]
+
+Station="*res://scripts/station.gd"
+
 [display]
 
 window/stretch/mode="canvas_items"

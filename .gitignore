@@ -4,3 +4,6 @@
 
 # raw texture downloads (zips, blend, usdc)
 assets/textures/**/_unused/
+
+# preview images Claude sends in chat
+Claude outputs/
